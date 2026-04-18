@@ -1,0 +1,126 @@
+:root {
+  --ink: #151822;
+  --sky: #7bd1f5;
+  --grass: #3fa75d;
+  --gold: #f5bf2e;
+  --coral: #ef6658;
+  --paper: #fffdfa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  min-height: 100vh;
+  margin: 0;
+  place-items: center;
+  background:
+    radial-gradient(circle at top left, rgba(245, 191, 46, 0.28), transparent 30%),
+    linear-gradient(180deg, #eaf8ff, #d7f1df);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.game-shell {
+  width: min(1040px, calc(100vw - 24px));
+}
+
+.hud,
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px;
+  border: 3px solid var(--ink);
+  background: var(--paper);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.hud {
+  margin-bottom: 12px;
+  border-radius: 8px 8px 0 0;
+}
+
+.hud div {
+  display: grid;
+  gap: 2px;
+}
+
+.hud span {
+  color: #586073;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.hud strong {
+  font-size: 1.7rem;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 3px solid var(--ink);
+  background: var(--sky);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.controls {
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  border-radius: 0 0 8px 8px;
+}
+
+.controls p {
+  flex: 1 1 340px;
+  margin: 0;
+  color: #50596c;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 2px solid var(--ink);
+  border-radius: 7px;
+  background: var(--gold);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.touch-controls {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 620px) {
+  .hud,
+  .controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hud {
+    flex-direction: row;
+  }
+
+  .touch-controls,
+  .touch-controls button,
+  #start {
+    width: 100%;
+  }
+}

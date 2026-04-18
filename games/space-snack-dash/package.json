@@ -1,0 +1,16 @@
+{
+  "name": "@arcade-shelf/space-snack-dash",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "arcadeShelf": {
+    "title": "Space Snack Dash",
+    "type": "platformer",
+    "note": "Collect snacks, hop over craters, and reach the rocket before the timer runs out.",
+    "entry": "dist/index.html",
+    "color": "#83d2f4"
+  }
+}

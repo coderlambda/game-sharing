@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Space Snack Dash</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="game-shell">
+      <section class="hud" aria-label="Game status">
+        <div>
+          <span>Score</span>
+          <strong id="score">0</strong>
+        </div>
+        <div>
+          <span>Time</span>
+          <strong id="time">30</strong>
+        </div>
+      </section>
+
+      <canvas id="game" width="960" height="540" aria-label="Space Snack Dash game"></canvas>
+
+      <section class="controls">
+        <button id="start" type="button">Start</button>
+        <p>Use arrows, A/D, or space to move and jump. Collect yellow snacks and avoid red craters.</p>
+        <div class="touch-controls" aria-label="Touch controls">
+          <button data-move="-1" type="button" aria-label="Move left">Left</button>
+          <button data-jump type="button" aria-label="Jump">Jump</button>
+          <button data-move="1" type="button" aria-label="Move right">Right</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

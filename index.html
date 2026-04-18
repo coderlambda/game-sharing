@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Arcade Shelf</title>
+    <meta
+      name="description"
+      content="A personal game gallery for sharing kid-built games with family and friends."
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Arcade Shelf home">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span>Arcade Shelf</span>
+      </a>
+      <nav class="nav-actions" aria-label="Main navigation">
+        <a href="#games">Games</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Family game showcase</p>
+          <h1 id="page-title">Arcade Shelf</h1>
+          <p>
+            A bright, private-feeling place to share games your kid builds,
+            collect feedback, and keep every new version easy to find.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#games">Browse games</a>
+          </div>
+        </div>
+        <div class="hero-stage" aria-hidden="true">
+          <div class="pixel-sky">
+            <span class="cloud cloud-one"></span>
+            <span class="cloud cloud-two"></span>
+            <span class="coin coin-one"></span>
+            <span class="coin coin-two"></span>
+            <span class="coin coin-three"></span>
+            <span class="player"></span>
+            <span class="platform platform-one"></span>
+            <span class="platform platform-two"></span>
+            <span class="platform platform-three"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="toolbar-section" aria-label="Game filters">
+        <div class="toolbar">
+          <div>
+            <p class="section-kicker">Game library</p>
+            <h2 id="games">Ready to play</h2>
+          </div>
+          <div class="segmented-control" role="group" aria-label="Filter games">
+            <button class="filter-button active" type="button" data-filter="all">All</button>
+            <button class="filter-button" type="button" data-filter="platformer">Platformer</button>
+            <button class="filter-button" type="button" data-filter="puzzle">Puzzle</button>
+            <button class="filter-button" type="button" data-filter="arcade">Arcade</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="gallery-band" aria-label="Shared games">
+        <div class="game-grid" id="game-grid"></div>
+      </section>
+
+      <section class="submit-band" id="add-game" aria-labelledby="add-title" hidden>
+        <div class="submit-layout">
+          <div>
+            <p class="section-kicker">New upload</p>
+            <h2 id="add-title">Add the next game</h2>
+            <p>
+              Add a title, game link, and short note. This demo stores new
+              entries in this browser so you can shape the collection before
+              wiring it to hosting or a database.
+            </p>
+          </div>
+          <form class="game-form" id="game-form">
+            <label>
+              Game title
+              <input name="title" type="text" placeholder="Space Snack Dash" required>
+            </label>
+            <label>
+              Game link
+              <input name="url" type="url" placeholder="https://example.com/game" required>
+            </label>
+            <label>
+              Type
+              <select name="type" required>
+                <option value="platformer">Platformer</option>
+                <option value="puzzle">Puzzle</option>
+                <option value="arcade">Arcade</option>
+              </select>
+            </label>
+            <label>
+              Builder note
+              <textarea
+                name="note"
+                rows="4"
+                placeholder="What should players try first?"
+                required
+              ></textarea>
+            </label>
+            <button class="button primary" type="submit">Save game</button>
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="game-dialog" id="game-dialog">
+      <button class="icon-button close-dialog" type="button" aria-label="Close details">
+        <span aria-hidden="true">x</span>
+      </button>
+      <div class="dialog-art" id="dialog-art" aria-hidden="true"></div>
+      <div class="dialog-content">
+        <p class="section-kicker" id="dialog-type"></p>
+        <h2 id="dialog-title"></h2>
+        <p id="dialog-note"></p>
+        <div class="dialog-actions">
+          <a class="button primary" id="dialog-play" href="#" target="_blank" rel="noreferrer">Play</a>
+          <button class="button secondary" id="dialog-share" type="button">Copy link</button>
+        </div>
+      </div>
+    </dialog>
+
+    <footer class="site-footer">
+      <span>Arcade Shelf</span>
+      <span>Built for sharing small games with a trusted circle.</span>
+    </footer>
+
+    <script src="games-manifest.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

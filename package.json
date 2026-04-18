@@ -1,0 +1,15 @@
+{
+  "name": "game-sharing",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "games/*"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "python3 -m http.server 8000 --directory dist",
+    "preview": "python3 -m http.server 8000 --directory dist",
+    "dev": "python3 -m http.server 8000"
+  }
+}

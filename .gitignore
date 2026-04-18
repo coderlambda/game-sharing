@@ -1,0 +1,5 @@
+node_modules/
+dist/
+games/*/dist/
+.codex
+.DS_Store
