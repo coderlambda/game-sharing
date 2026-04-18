@@ -786,9 +786,9 @@ function draw() {
   ctx.fillRect(0, 0, W, GROUND_Y);
 
   // clouds
-  ctx.font = '40px serif';
+  ctx.fillStyle = '#fff';
   for (const c of clouds) {
-    ctx.font = c.size + 'px serif';
+    ctx.font = c.size + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
     ctx.fillText('☁️', c.x, c.y);
   }
 
@@ -947,7 +947,8 @@ function draw() {
     ctx.lineWidth = 3;
     ctx.stroke();
     // picture centered
-    ctx.font = '40px serif';
+    ctx.fillStyle = '#222';
+    ctx.font = '40px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(p.pic, p.x + p.width / 2, p.y + p.height / 2 + 2);
@@ -959,14 +960,16 @@ function draw() {
   if (cat.emoji === 'CUSTOM_BLACK') {
     drawBlackCat(ctx, cat.x, cat.y + 4, cat.size);
   } else {
-    ctx.font = cat.size + 'px serif';
+    ctx.fillStyle = '#000';
+    ctx.font = cat.size + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
     ctx.textBaseline = 'bottom';
     ctx.fillText(cat.emoji, cat.x - cat.size / 2, cat.y + 5);
   }
 
   // monsters
+  ctx.fillStyle = '#000';
   for (const m of monsters) {
-    ctx.font = m.size + 'px serif';
+    ctx.font = m.size + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
     ctx.fillText(m.emoji, m.x - m.size / 2, m.y + 5);
   }
 
