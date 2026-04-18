@@ -1,0 +1,16 @@
+{
+  "name": "@arcade-shelf/cat-jump",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "arcadeShelf": {
+    "title": "Cat Jump",
+    "type": "platformer",
+    "note": "Help the black cat jump over monsters, lava pits, and volcanoes. Tap JUMP to jump, hold to fly!",
+    "entry": "dist/index.html",
+    "color": "#2db855"
+  }
+}
