@@ -172,21 +172,21 @@
 <body>
   <h1>🐱 Cat Jump! 🐱</h1>
   <div class="stage">
-    <canvas id="game" width="1280" height="640"></canvas>
+    <canvas id="game" width="1280" height="960"></canvas>
     <button id="jumpBtn" type="button">JUMP!</button>
     <button id="pauseBtn" type="button">⏸</button>
     <button id="practiceBtn" type="button">🎯 Practice: OFF</button>
     <button id="replayBtn" type="button">🔁 Replay</button>
     <a id="homeLink" href="index.html">🏠 Home</a>
   </div>
-  <div id="info">Tap the JUMP button (or press SPACE) · Avoid the monsters!</div>
+  <div id="info">Tap JUMP (or press SPACE) · Hold JUMP to fly · 📱 Turn phone sideways for best view!</div>
 
 <script>
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const W = canvas.width;
 const H = canvas.height;
-const GROUND_Y = H * 0.7;
+const GROUND_Y = H * 0.78;
 
 const cat = {
   x: 160,
@@ -198,8 +198,8 @@ const cat = {
   emoji: localStorage.getItem('selectedCat') || '🐱',
 };
 
-const GRAVITY = 1.2;
-const JUMP_POWER = -34;
+const GRAVITY = 1.1;
+const JUMP_POWER = -36;
 
 let monsters = [];
 let platforms = [];
@@ -451,7 +451,7 @@ function update() {
   cat.vy += GRAVITY;
   cat.y += cat.vy;
   // don't fly above the top of the sky
-  if (cat.y < 30) { cat.y = 30; if (cat.vy < 0) cat.vy = 0; }
+  if (cat.y < 40) { cat.y = 40; if (cat.vy < 0) cat.vy = 0; }
 
   // land on platforms (only while falling)
   if (cat.vy >= 0) {
