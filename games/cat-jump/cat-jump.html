@@ -207,6 +207,11 @@ let platforms = [];
 let mountains = [];
 let pits = [];
 let lavaBombs = [];
+let bullets = [];
+let level = 1;
+let lastShot = -1000;
+const LEVEL_THRESHOLDS = [0, 250, 500, 750, 1000];
+const SHOOT_INTERVAL = 600; // 10 seconds @ 60fps
 let score = 0;
 let highScore = 0;
 let gameOver = false;
@@ -241,6 +246,9 @@ function resetGame() {
   mountains = [];
   pits = [];
   lavaBombs = [];
+  bullets = [];
+  level = 1;
+  lastShot = -1000;
   cat.x = 160;
   score = 0;
   gameSpeed = 6;
@@ -669,9 +677,48 @@ function update() {
     }
   }
 
-  // score & speed up
+  // score & level & speed up
   score++;
+  let nl = 1;
+  for (let i = 0; i < LEVEL_THRESHOLDS.length; i++) {
+    if (score >= LEVEL_THRESHOLDS[i]) nl = i + 1;
+  }
+  level = Math.min(5, nl);
   gameSpeed = 6 + Math.min(6, score / 400);
+
+  // level 5 shooter — auto-fires every 10 seconds
+  if (level >= 5 && frame - lastShot >= SHOOT_INTERVAL) {
+    lastShot = frame;
+    bullets.push({
+      x: cat.x + cat.size * 0.4,
+      y: cat.y - cat.size * 0.4,
+      vx: 14,
+      size: 14,
+      life: 0,
+    });
+  }
+
+  // move bullets
+  for (const b of bullets) { b.x += b.vx; b.life++; }
+  bullets = bullets.filter(b => b.x < W + 40);
+
+  // bullet–monster collisions
+  for (const b of bullets) {
+    if (b.hit) continue;
+    for (const m of monsters) {
+      if (m.hit) continue;
+      const dx = Math.abs(b.x - m.x);
+      const dy = Math.abs(b.y - (m.y - 20));
+      if (dx < 35 && dy < 35) {
+        m.hit = true;
+        b.hit = true;
+        score += 25;
+        break;
+      }
+    }
+  }
+  monsters = monsters.filter(m => !m.hit);
+  bullets = bullets.filter(b => !b.hit);
 }
 
 function drawBlackCat(ctx, cx, by, size) {
@@ -945,6 +992,29 @@ function draw() {
     }
   }
 
+  // bullets (energy orbs shot by the level-5 cat)
+  for (const b of bullets) {
+    ctx.fillStyle = 'rgba(120,220,255,0.45)';
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.size + 8, 0, Math.PI * 2);
+    ctx.fill();
+    const grad = ctx.createRadialGradient(b.x - 3, b.y - 3, 2, b.x, b.y, b.size);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.5, '#58d8ff');
+    grad.addColorStop(1, '#1a6abf');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#0a3a6a';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.beginPath();
+    ctx.arc(b.x - 12, b.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   // lava bombs
   for (const b of lavaBombs) {
     // glow
@@ -1029,6 +1099,18 @@ function draw() {
   ctx.textBaseline = 'top';
   ctx.fillText('Score: ' + score, 20, 15);
   ctx.fillText('Best: ' + highScore, 20, 42);
+  // level badge
+  ctx.fillStyle = level >= 5 ? '#c02060' : '#2a5aa0';
+  ctx.fillText('Level ' + level + (level >= 5 ? ' 🔫' : ''), 200, 15);
+  // shooter cooldown display (when unlocked)
+  if (level >= 5) {
+    const sinceShot = frame - lastShot;
+    const ready = sinceShot >= SHOOT_INTERVAL;
+    ctx.font = 'bold 14px Arial';
+    ctx.fillStyle = ready ? '#1ab85a' : '#888';
+    const secs = Math.max(0, Math.ceil((SHOOT_INTERVAL - sinceShot) / 60));
+    ctx.fillText(ready ? 'Ready!' : 'Reload: ' + secs + 's', 200, 44);
+  }
   if (practiceMode) {
     ctx.fillStyle = '#0a7a0a';
     ctx.font = 'bold 20px Arial';
