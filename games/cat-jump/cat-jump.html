@@ -213,6 +213,7 @@ let gameOver = false;
 let paused = false;
 let practiceMode = localStorage.getItem('practiceMode') === 'true';
 let jumpHeld = false;
+let isFlying = false;
 const FLY_MAX = 180;      // 3 seconds at 60fps
 const FLY_REST = 300;     // 5 seconds rest
 let flyStamina = FLY_MAX;
@@ -248,6 +249,7 @@ function resetGame() {
   cat.vy = 0;
   cat.jumping = false;
   cat.jumpsLeft = 2;
+      isFlying = false;
   flyStamina = FLY_MAX;
   flyRest = 0;
   gameOver = false;
@@ -260,7 +262,7 @@ function resetGame() {
 }
 
 function pressJump() { jumpHeld = true; jump(); }
-function releaseJump() { jumpHeld = false; }
+function releaseJump() { jumpHeld = false; isFlying = false; }
 
 document.addEventListener('keydown', e => {
   if ((e.code === 'Space' || e.code === 'ArrowUp') && !e.repeat) {
@@ -449,9 +451,13 @@ function update() {
   if (paused) return;
   frame++;
 
-  // cat physics — hold jump to fly (with stamina)
+  // cat physics — flying kicks in only AFTER the jump reaches its peak
   const prevY = cat.y;
-  const canFly = jumpHeld && !gameOver && flyRest === 0 && flyStamina > 0;
+  // start flying once the jump's upward momentum is gone (cat is at/past peak)
+  if (jumpHeld && !gameOver && cat.vy >= 0 && cat.jumping && flyRest === 0 && flyStamina > 0) {
+    isFlying = true;
+  }
+  const canFly = isFlying && jumpHeld && !gameOver && flyRest === 0 && flyStamina > 0;
   if (canFly) {
     cat.vy -= 1.9; // strong lift (beats gravity)
     if (cat.vy < -9) cat.vy = -9;
@@ -459,11 +465,12 @@ function update() {
     if (flyStamina <= 0) {
       flyStamina = 0;
       flyRest = FLY_REST;
+      isFlying = false;
     }
   } else if (flyRest > 0) {
     flyRest--;
     if (flyRest === 0) flyStamina = FLY_MAX;
-  } else if (!jumpHeld && flyStamina < FLY_MAX) {
+  } else if (!isFlying && flyStamina < FLY_MAX) {
     // slow recharge while not flying
     flyStamina = Math.min(FLY_MAX, flyStamina + 0.8);
   }
@@ -490,6 +497,7 @@ function update() {
           cat.vy = 0;
           cat.jumping = false;
           cat.jumpsLeft = 2;
+      isFlying = false;
         }
       }
     }
@@ -506,6 +514,7 @@ function update() {
       cat.vy = 0;
       cat.jumping = false;
       cat.jumpsLeft = 2;
+      isFlying = false;
     } else if (cat.vy <= 0 && cat.y > surfY) {
       // stuck against the slope — pushed left with the mountain
       cat.x -= gameSpeed;
@@ -528,6 +537,7 @@ function update() {
     cat.vy = 0;
     cat.jumping = false;
     cat.jumpsLeft = 2;
+      isFlying = false;
   }
 
   // cat recovers to normal x when not stuck (gentle drift back)
@@ -649,6 +659,7 @@ function update() {
         cat.vy = 0;
         cat.jumping = false;
         cat.jumpsLeft = 2;
+      isFlying = false;
         monsters = monsters.filter(mm => mm.x > cat.x + 300 || mm.x < cat.x - 100);
       } else {
         gameOver = true;
