@@ -154,6 +154,7 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 8px;
+    margin-top: 18px;
   }
   .level-btn {
     background: #fff;
@@ -193,6 +194,25 @@
   .level-btn .level-label {
     font-size: 14px;
     font-weight: bold;
+  }
+  .level-btn {
+    position: relative;
+  }
+  .award-tag {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(#ffe066, #ffb400);
+    color: #5a3a00;
+    border: 2px solid #5a3a00;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    box-shadow: 0 2px 0 #5a3a00;
+    letter-spacing: 0.5px;
   }
 </style>
 </head>
@@ -239,6 +259,7 @@
           <div class="level-label">🔒</div>
         </a>
         <a class="level-btn" data-level="5" href="cat-jump.html?level=5">
+          <div class="award-tag">🏆 Award</div>
           <div class="level-num">5</div>
           <div class="level-label">🔒</div>
         </a>
