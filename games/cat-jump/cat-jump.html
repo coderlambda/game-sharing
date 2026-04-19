@@ -212,6 +212,10 @@ let gameOver = false;
 let paused = false;
 let practiceMode = localStorage.getItem('practiceMode') === 'true';
 let jumpHeld = false;
+const FLY_MAX = 600;      // 10 seconds at 60fps
+const FLY_REST = 180;     // 3 seconds rest
+let flyStamina = FLY_MAX;
+let flyRest = 0;
 let gameSpeed = 6;
 let frame = 0;
 let clouds = [
@@ -243,6 +247,8 @@ function resetGame() {
   cat.vy = 0;
   cat.jumping = false;
   cat.jumpsLeft = 2;
+  flyStamina = FLY_MAX;
+  flyRest = 0;
   gameOver = false;
   paused = false;
   if (typeof pauseBtn !== 'undefined') pauseBtn.textContent = '⏸';
@@ -442,11 +448,23 @@ function update() {
   if (paused) return;
   frame++;
 
-  // cat physics — hold jump to fly!
+  // cat physics — hold jump to fly (with stamina)
   const prevY = cat.y;
-  if (jumpHeld && !gameOver) {
+  const canFly = jumpHeld && !gameOver && flyRest === 0 && flyStamina > 0;
+  if (canFly) {
     cat.vy -= 1.9; // strong lift (beats gravity)
     if (cat.vy < -9) cat.vy = -9;
+    flyStamina--;
+    if (flyStamina <= 0) {
+      flyStamina = 0;
+      flyRest = FLY_REST;
+    }
+  } else if (flyRest > 0) {
+    flyRest--;
+    if (flyRest === 0) flyStamina = FLY_MAX;
+  } else if (!jumpHeld && flyStamina < FLY_MAX) {
+    // slow recharge while not flying
+    flyStamina = Math.min(FLY_MAX, flyStamina + 0.8);
   }
   cat.vy += GRAVITY;
   cat.y += cat.vy;
@@ -983,6 +1001,27 @@ function draw() {
     ctx.fillStyle = '#0a7a0a';
     ctx.font = 'bold 20px Arial';
     ctx.fillText('🎯 PRACTICE', 20, 70);
+  }
+
+  // fly stamina bar
+  {
+    const barX = 20;
+    const barY = practiceMode ? 100 : 74;
+    const barW = 240;
+    const barH = 20;
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(barX - 2, barY - 2, barW + 4, barH + 4);
+    const resting = flyRest > 0;
+    const pct = resting ? (1 - flyRest / FLY_REST) : (flyStamina / FLY_MAX);
+    ctx.fillStyle = resting ? '#b83a3a' : '#3abf6a';
+    ctx.fillRect(barX, barY, barW * pct, barH);
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(barX, barY, barW, barH);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 15px Arial';
+    ctx.textBaseline = 'top';
+    ctx.fillText(resting ? '💤 Resting…' : '✈️ Fly', barX + 8, barY + 2);
   }
 
   // paused screen
