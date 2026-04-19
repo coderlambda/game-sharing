@@ -96,33 +96,6 @@
     transform: translateY(3px);
     box-shadow: 0 1px 0 #333;
   }
-  #practiceBtn {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, 30px);
-    padding: 14px 24px;
-    border-radius: 18px;
-    border: 4px solid #333;
-    background: #ffd86b;
-    color: #222;
-    font-size: 22px;
-    font-weight: bold;
-    box-shadow: 0 4px 0 #333;
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    display: none;
-  }
-  #practiceBtn.on {
-    background: #7cd97c;
-    color: #0a3a0a;
-  }
-  #practiceBtn:active {
-    transform: translate(-50%, 33px);
-    box-shadow: 0 1px 0 #333;
-  }
   #replayBtn {
     position: absolute;
     left: 50%;
@@ -175,7 +148,6 @@
     <canvas id="game" width="1280" height="960"></canvas>
     <button id="jumpBtn" type="button">JUMP!</button>
     <button id="pauseBtn" type="button">⏸</button>
-    <button id="practiceBtn" type="button">🎯 Practice: OFF</button>
     <button id="replayBtn" type="button">🔁 Replay</button>
     <a id="homeLink" href="index.html">🏠 Home</a>
   </div>
@@ -216,7 +188,6 @@ let score = 0;
 let highScore = 0;
 let gameOver = false;
 let paused = false;
-let practiceMode = localStorage.getItem('practiceMode') === 'true';
 let jumpHeld = false;
 let isFlying = false;
 const FLY_MAX = 180;      // 3 seconds at 60fps
@@ -299,30 +270,14 @@ jumpBtn.addEventListener('mousedown', e => { e.preventDefault(); pressJump(); })
 jumpBtn.addEventListener('mouseup', e => { e.preventDefault(); releaseJump(); });
 jumpBtn.addEventListener('mouseleave', releaseJump);
 
-function updatePracticeBtn() {
-  practiceBtn.textContent = '🎯 Practice: ' + (practiceMode ? 'ON' : 'OFF');
-  practiceBtn.classList.toggle('on', practiceMode);
-}
 function togglePause() {
   if (gameOver) return;
   paused = !paused;
   pauseBtn.textContent = paused ? '▶' : '⏸';
-  practiceBtn.style.display = paused ? 'block' : 'none';
 }
 const pauseBtn = document.getElementById('pauseBtn');
 pauseBtn.addEventListener('touchstart', e => { e.preventDefault(); togglePause(); }, { passive: false });
 pauseBtn.addEventListener('mousedown', e => { e.preventDefault(); togglePause(); });
-
-const practiceBtn = document.getElementById('practiceBtn');
-updatePracticeBtn();
-function togglePractice(e) {
-  e.preventDefault();
-  practiceMode = !practiceMode;
-  localStorage.setItem('practiceMode', practiceMode);
-  updatePracticeBtn();
-}
-practiceBtn.addEventListener('touchstart', togglePractice, { passive: false });
-practiceBtn.addEventListener('mousedown', togglePractice);
 
 const replayBtn = document.getElementById('replayBtn');
 const homeLink = document.getElementById('homeLink');
@@ -527,14 +482,8 @@ function update() {
       // stuck against the slope — pushed left with the mountain
       cat.x -= gameSpeed;
       if (cat.x < 20) {
-        if (practiceMode) {
-          cat.x = 160;
-          cat.y = GROUND_Y;
-          cat.vy = 0;
-        } else {
-          gameOver = true;
-          if (score > highScore) highScore = score;
-        }
+        gameOver = true;
+        if (score > highScore) highScore = score;
       }
     }
   }
@@ -608,14 +557,8 @@ function update() {
     const dx = Math.abs(cat.x - b.x);
     const dy = Math.abs(cat.y - 20 - b.y);
     if (dx < 30 && dy < 30) {
-      if (practiceMode) {
-        cat.x = 160;
-        cat.y = GROUND_Y;
-        cat.vy = 0;
-      } else {
-        gameOver = true;
-        if (score > highScore) highScore = score;
-      }
+      gameOver = true;
+      if (score > highScore) highScore = score;
       break;
     }
   }
@@ -623,14 +566,8 @@ function update() {
   // pit collision — if the cat is on the ground over a pit, game over
   for (const p of pits) {
     if (cat.x > p.x && cat.x < p.x + p.width && cat.y >= GROUND_Y - 2) {
-      if (practiceMode) {
-        cat.x = 160;
-        cat.y = GROUND_Y;
-        cat.vy = 0;
-      } else {
-        gameOver = true;
-        if (score > highScore) highScore = score;
-      }
+      gameOver = true;
+      if (score > highScore) highScore = score;
       break;
     }
   }
@@ -661,18 +598,8 @@ function update() {
     const dx = Math.abs(cat.x - m.x);
     const dy = Math.abs(cat.y - m.y);
     if (dx < 35 && dy < 35) {
-      if (practiceMode) {
-        // respawn at starting point, clear nearby threats
-        cat.y = GROUND_Y;
-        cat.vy = 0;
-        cat.jumping = false;
-        cat.jumpsLeft = 2;
-      isFlying = false;
-        monsters = monsters.filter(mm => mm.x > cat.x + 300 || mm.x < cat.x - 100);
-      } else {
-        gameOver = true;
-        if (score > highScore) highScore = score;
-      }
+      gameOver = true;
+      if (score > highScore) highScore = score;
       break;
     }
   }
@@ -1115,16 +1042,10 @@ function draw() {
     const secs = Math.max(0, Math.ceil((SHOOT_INTERVAL - sinceShot) / 60));
     ctx.fillText(ready ? 'Ready!' : 'Reload: ' + secs + 's', 200, 44);
   }
-  if (practiceMode) {
-    ctx.fillStyle = '#0a7a0a';
-    ctx.font = 'bold 20px Arial';
-    ctx.fillText('🎯 PRACTICE', 20, 70);
-  }
-
   // fly stamina bar
   {
     const barX = 20;
-    const barY = practiceMode ? 100 : 74;
+    const barY = 74;
     const barW = 240;
     const barH = 20;
     ctx.fillStyle = 'rgba(0,0,0,0.3)';
