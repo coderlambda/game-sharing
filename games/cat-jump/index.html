@@ -150,6 +150,50 @@
     font-size: 16px;
     color: #444;
   }
+  .levels {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .level-btn {
+    background: #fff;
+    border: 3px solid #333;
+    border-radius: 14px;
+    padding: 12px 6px;
+    text-decoration: none;
+    color: #222;
+    box-shadow: 0 4px 0 #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .level-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #333;
+  }
+  .level-btn.unlocked {
+    background: linear-gradient(#d6f5ff, #7cd1ff);
+  }
+  .level-btn.beaten {
+    background: linear-gradient(#ddffe0, #7cdd8b);
+  }
+  .level-btn.locked {
+    background: #d6d6d6;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: 0 2px 0 #777;
+  }
+  .level-btn .level-num {
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+  }
+  .level-btn .level-label {
+    font-size: 14px;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
@@ -175,19 +219,29 @@
       <div class="picked">Your cat: <span id="picked">🐱</span></div>
     </div>
 
-    <div class="grid">
-      <a class="card" href="cat-jump.html">
-        <div class="icon">🐱</div>
-        <div class="title">Cat Jump!</div>
-        <div class="desc">A cat jumps over scary monsters. How long can you survive?</div>
-        <div class="play">▶ Play</div>
-      </a>
-
-      <div class="card coming">
-        <div class="icon">✨</div>
-        <div class="title">More Soon!</div>
-        <div class="desc">Tell Claude what game you want next!</div>
-        <div class="play">Coming…</div>
+    <div class="picker">
+      <h2>🎚️ Pick a level!</h2>
+      <div class="levels" id="levels">
+        <a class="level-btn" data-level="1" href="cat-jump.html?level=1">
+          <div class="level-num">1</div>
+          <div class="level-label">Start</div>
+        </a>
+        <a class="level-btn" data-level="2" href="cat-jump.html?level=2">
+          <div class="level-num">2</div>
+          <div class="level-label">🔒</div>
+        </a>
+        <a class="level-btn" data-level="3" href="cat-jump.html?level=3">
+          <div class="level-num">3</div>
+          <div class="level-label">🔒</div>
+        </a>
+        <a class="level-btn" data-level="4" href="cat-jump.html?level=4">
+          <div class="level-num">4</div>
+          <div class="level-label">🔒</div>
+        </a>
+        <a class="level-btn" data-level="5" href="cat-jump.html?level=5">
+          <div class="level-num">5</div>
+          <div class="level-label">🔒</div>
+        </a>
       </div>
     </div>
 
@@ -280,6 +334,24 @@ function drawBlackCat(ctx, cx, by, size) {
       for (const b of document.querySelectorAll('.cat-btn')) b.classList.remove('selected');
       btn.classList.add('selected');
     });
+  }
+
+  // level gating
+  const highestBeaten = parseInt(localStorage.getItem('catJumpHighestBeaten') || '0', 10);
+  for (const btn of document.querySelectorAll('.level-btn')) {
+    const lvl = parseInt(btn.dataset.level, 10);
+    const label = btn.querySelector('.level-label');
+    if (lvl > highestBeaten + 1) {
+      btn.classList.add('locked');
+      btn.addEventListener('click', e => e.preventDefault());
+      label.textContent = '🔒';
+    } else if (lvl <= highestBeaten) {
+      btn.classList.add('beaten');
+      label.textContent = '✓ Beaten';
+    } else {
+      btn.classList.add('unlocked');
+      label.textContent = lvl === 1 ? 'Start' : '▶ Play';
+    }
   }
 </script>
 </body>

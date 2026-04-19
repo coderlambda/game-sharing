@@ -180,7 +180,10 @@ let mountains = [];
 let pits = [];
 let lavaBombs = [];
 let bullets = [];
-let level = 1;
+const urlParams = new URLSearchParams(window.location.search);
+const startLevel = Math.max(1, Math.min(5, parseInt(urlParams.get('level') || '1', 10)));
+let level = startLevel;
+let prevLevel = startLevel;
 let lastShot = -1000;
 const LEVEL_FRAMES = 18000;        // 5 minutes @ 60fps
 const SHOOT_INTERVAL = 600;        // 10 seconds @ 60fps
@@ -218,7 +221,8 @@ function resetGame() {
   pits = [];
   lavaBombs = [];
   bullets = [];
-  level = 1;
+  level = startLevel;
+  prevLevel = startLevel;
   lastShot = -1000;
   cat.x = 160;
   score = 0;
@@ -606,8 +610,19 @@ function update() {
 
   // score & level & speed up
   score++;
-  // level advances once per 5 minutes of survival, capped at 5
-  level = Math.min(5, Math.floor(frame / LEVEL_FRAMES) + 1);
+  // level advances once per 5 minutes of survival, starting from startLevel, capped at 5
+  level = Math.min(5, Math.floor(frame / LEVEL_FRAMES) + startLevel);
+  if (level > prevLevel) {
+    const beaten = prevLevel;
+    const best = Math.max(beaten, parseInt(localStorage.getItem('catJumpHighestBeaten') || '0', 10));
+    localStorage.setItem('catJumpHighestBeaten', String(best));
+    prevLevel = level;
+  }
+  // surviving 5 minutes at level 5 counts as beating the whole game
+  if (level === 5 && frame >= LEVEL_FRAMES * (5 - startLevel + 1)) {
+    const best = Math.max(5, parseInt(localStorage.getItem('catJumpHighestBeaten') || '0', 10));
+    localStorage.setItem('catJumpHighestBeaten', String(best));
+  }
   gameSpeed = 6 + Math.min(6, score / 400);
 
   // level 5 shooter — auto-fires every 10 seconds
